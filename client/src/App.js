@@ -8,6 +8,8 @@ import SignIn from './components/SignIn/SignIn';
 import Register from './components/Register/Register';
 import './App.css';
 
+const apiurl = process.env.API_URL;
+
 const initialState = {
     input: '',
     imageUrl: '',
@@ -33,7 +35,7 @@ class App extends Component {
         const token = window.sessionStorage.getItem('token');
         if (token)
         {
-            fetch('http://localhost:3001/signin', {
+            fetch(`${apiurl}/signin`, {
                 method: 'post',
                 headers: {
                     'Content-Type': 'application/json',
@@ -43,7 +45,7 @@ class App extends Component {
             .then(resp => resp.json())
             .then(data => {
                 if (data && data.id) {
-                    fetch(`http://localhost:3001/profile/${data.id}`, {
+                    fetch(`${apiurl}/profile/${data.id}`, {
                         method: 'get',
                         headers: {
                             'Content-Type': 'application/json',
@@ -110,7 +112,7 @@ class App extends Component {
 
     onPictureSubmit = () => {
         this.setState({imageUrl: this.state.input});
-        fetch('http://localhost:3001/imageurl', {
+        fetch(`${apiurl}/imageurl`, {
             method: 'post',
             headers: {
                 'Content-Type': 'application/json',
@@ -123,7 +125,7 @@ class App extends Component {
         .then(response => response.json())
         .then(response => {
             if (response) {
-                fetch('http://localhost:3001/image', {
+                fetch(`${apiurl}/image`, {
                     method: 'put',
                     headers: {
                         'Content-Type': 'application/json',
