@@ -1,7 +1,11 @@
 import React from 'react';
 import {NavLink} from "react-router-dom";
 
+
+const apiurl = process.env.API_URL;
+
 class SignIn extends React.Component {
+
 
     constructor(props) {
         super(props);
