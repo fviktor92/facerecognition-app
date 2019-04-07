@@ -1,0 +1,61 @@
+version: '3'
+
+services:
+  # Client
+  client:
+    image: webapp-client
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./client:/client
+      - /client/node_modules
+    links:
+      - api
+    networks:
+      - webappnetwork
+
+  #Backend api
+  api:
+    image: webapp-api
+    environment:
+      POSTGRES_URI: postgres://postgres:admin@postgres:5432/smartbrain
+      REDIS_URI: redis://redis:6379
+    links:
+      - postgres
+      - redis
+    restart: always
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./api:/api
+      - /api/node_modules
+    networks:
+      - webappnetwork
+
+  # Postgres
+  postgres:
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: smartbrain
+      POSTGRES_HOST: postgres
+    build: ./api/postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    networks:
+      - webappnetwork
+
+  # Redis
+  redis:
+    image: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - webappnetwork
+
+networks:
+  webappnetwork:
+    driver: bridge

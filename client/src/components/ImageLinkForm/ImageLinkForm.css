@@ -1,0 +1,4 @@
+.form {
+    width: 700px;
+    background: linear-gradient(90deg, rgba(0,51,51,0.2) 0%, rgba(5,193,255,0.2) 50%, rgba(0,51,51,0.2) 100%); /* w3c */
+}
