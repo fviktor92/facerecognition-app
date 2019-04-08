@@ -1,11 +1,7 @@
 import React from 'react';
 import {NavLink} from "react-router-dom";
 
-
-const apiurl = process.env.API_URL;
-
 class SignIn extends React.Component {
-
 
     constructor(props) {
         super(props);
@@ -28,7 +24,7 @@ class SignIn extends React.Component {
     }
 
     onSubmitSignIn = () => {
-        fetch(`${apiurl}/signin`, {
+        fetch(process.env.REACT_APP_API_URL + '/signin', {
             method: 'post',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
@@ -40,7 +36,7 @@ class SignIn extends React.Component {
         .then(data => {
             if (data.userId && data.success === 'true') {
                 this.saveAuthTokenInSession(data.token);
-                fetch(`${apiurl}/profile/${data.userId}`, {
+                fetch(process.env.REACT_APP_API_URL + `/profile/${data.userId}`, {
                     method: 'get',
                     headers: {
                         'Content-Type': 'application/json',

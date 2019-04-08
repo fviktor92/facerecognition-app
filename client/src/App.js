@@ -8,8 +8,6 @@ import SignIn from './components/SignIn/SignIn';
 import Register from './components/Register/Register';
 import './App.css';
 
-const apiurl = process.env.API_URL;
-
 const initialState = {
     input: '',
     imageUrl: '',
@@ -35,7 +33,7 @@ class App extends Component {
         const token = window.sessionStorage.getItem('token');
         if (token)
         {
-            fetch(`${apiurl}/signin`, {
+            fetch(process.env.REACT_APP_API_URL + '/signin', {
                 method: 'post',
                 headers: {
                     'Content-Type': 'application/json',
@@ -45,7 +43,7 @@ class App extends Component {
             .then(resp => resp.json())
             .then(data => {
                 if (data && data.id) {
-                    fetch(`${apiurl}/profile/${data.id}`, {
+                    fetch(process.env.REACT_APP_API_URL + `/profile/${data.id}`, {
                         method: 'get',
                         headers: {
                             'Content-Type': 'application/json',
@@ -112,7 +110,7 @@ class App extends Component {
 
     onPictureSubmit = () => {
         this.setState({imageUrl: this.state.input});
-        fetch(`${apiurl}/imageurl`, {
+        fetch(process.env.REACT_APP_API_URL + '/imageurl', {
             method: 'post',
             headers: {
                 'Content-Type': 'application/json',
@@ -125,7 +123,7 @@ class App extends Component {
         .then(response => response.json())
         .then(response => {
             if (response) {
-                fetch(`${apiurl}/image`, {
+                fetch(process.env.REACT_APP_API_URL + '/image', {
                     method: 'put',
                     headers: {
                         'Content-Type': 'application/json',
