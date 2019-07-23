@@ -24,7 +24,7 @@ class SignIn extends React.Component {
     }
 
     onSubmitSignIn = () => {
-        fetch(process.env.REACT_APP_API_URL + '/signin', {
+        fetch(this.props.apiurl + '/signin', {
             method: 'post',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
@@ -36,7 +36,7 @@ class SignIn extends React.Component {
         .then(data => {
             if (data.userId && data.success === 'true') {
                 this.saveAuthTokenInSession(data.token);
-                fetch(process.env.REACT_APP_API_URL + `/profile/${data.userId}`, {
+                fetch(this.props.apiurl + `/profile/${data.userId}`, {
                     method: 'get',
                     headers: {
                         'Content-Type': 'application/json',

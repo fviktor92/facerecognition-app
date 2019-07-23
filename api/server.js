@@ -12,7 +12,7 @@ const morgan = require('morgan')
 
 const db = knex({
     client: 'pg',
-    connection: process.env.POSTGRES_URI
+    connection: process.env.POSTGRES_URI ||  "http://postgres:admin@127.0.0.1:5432/smartbrain" 
 });
 
 const app = express();

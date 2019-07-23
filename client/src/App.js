@@ -27,13 +27,14 @@ class App extends Component {
     constructor() {
         super();
         this.state = initialState
+        this.API_URL = process.env.REACT_APP_API_URL || "http://localhost:3001"; 
     }
 
     componentDidMount() {
         const token = window.sessionStorage.getItem('token');
         if (token)
         {
-            fetch(process.env.REACT_APP_API_URL + '/signin', {
+            fetch(this.API_URL + '/signin', {
                 method: 'post',
                 headers: {
                     'Content-Type': 'application/json',
@@ -43,7 +44,7 @@ class App extends Component {
             .then(resp => resp.json())
             .then(data => {
                 if (data && data.id) {
-                    fetch(process.env.REACT_APP_API_URL + `/profile/${data.id}`, {
+                    fetch(this.componentWillMountAPI_URL + `/profile/${data.id}`, {
                         method: 'get',
                         headers: {
                             'Content-Type': 'application/json',
@@ -110,7 +111,7 @@ class App extends Component {
 
     onPictureSubmit = () => {
         this.setState({imageUrl: this.state.input});
-        fetch(process.env.REACT_APP_API_URL + '/imageurl', {
+        fetch(this.API_URL + '/imageurl', {
             method: 'post',
             headers: {
                 'Content-Type': 'application/json',
@@ -123,7 +124,7 @@ class App extends Component {
         .then(response => response.json())
         .then(response => {
             if (response) {
-                fetch(process.env.REACT_APP_API_URL + '/image', {
+                fetch(this.API_URL + '/image', {
                     method: 'put',
                     headers: {
                         'Content-Type': 'application/json',
@@ -169,8 +170,8 @@ class App extends Component {
                         </div>
                         : (
                             route === 'signin' || route === 'signout'
-                                ? <SignIn loadUser={this.loadUser} onRouteChange={this.onRouteChange}/>
-                                : <Register loadUser={this.loadUser} onRouteChange={this.onRouteChange}/>
+                                ? <SignIn apiurl={this.API_URL} loadUser={this.loadUser} onRouteChange={this.onRouteChange}/>
+                                : <Register apiurl={this.API_URL} loadUser={this.loadUser} onRouteChange={this.onRouteChange}/>
                         )
                     }
                 </div>
