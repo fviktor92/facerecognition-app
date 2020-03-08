@@ -44,7 +44,7 @@ class App extends Component {
             .then(resp => resp.json())
             .then(data => {
                 if (data && data.id) {
-                    fetch(this.componentWillMountAPI_URL + `/profile/${data.id}`, {
+                    fetch(this.API_URL + `/profile/${data.id}`, {
                         method: 'get',
                         headers: {
                             'Content-Type': 'application/json',
