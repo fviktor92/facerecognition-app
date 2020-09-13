@@ -9,6 +9,7 @@ class Register extends React.Component {
             password: '',
             name: ''
         };
+        window.registerComponent = this;
     }
 
     onNameChange = (event) => {
