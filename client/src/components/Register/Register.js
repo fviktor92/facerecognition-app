@@ -1,4 +1,5 @@
 import React from 'react';
+import {NavLink} from "react-router-dom";
 
 class Register extends React.Component {
 
@@ -34,13 +35,13 @@ class Register extends React.Component {
                 name: this.state.name
             })
         })
-        .then(response => response.json())
-        .then(user => {
-            if (user.id) {
-                this.props.loadUser(user);
-                this.props.onRouteChange('home');
-            }
-        });
+            .then(response => response.json())
+            .then(user => {
+                if (user.id) {
+                    this.props.loadUser(user);
+                    this.props.onRouteChange('home');
+                }
+            });
     };
 
     render() {
@@ -60,7 +61,8 @@ class Register extends React.Component {
                                     onChange={this.onNameChange}/>
                             </div>
                             <div id='email-container' className="mt3">
-                                <label id='email-label' className="db fw6 lh-copy f6" htmlFor="email-address">Email</label>
+                                <label id='email-label' className="db fw6 lh-copy f6"
+                                       htmlFor="email-address">Email</label>
                                 <input
                                     className="pa2 input-reset ba bg-transparent hover-bg-black-30 hover-white w-100"
                                     type="email"
@@ -69,7 +71,8 @@ class Register extends React.Component {
                                     onChange={this.onEmailChange}/>
                             </div>
                             <div id='password-container' className="mv3">
-                                <label id='password-label' className="db fw6 lh-copy f6" htmlFor="password">Password</label>
+                                <label id='password-label' className="db fw6 lh-copy f6"
+                                       htmlFor="password">Password</label>
                                 <input
                                     className="b pa2 input-reset ba bg-transparent hover-bg-black-30 hover-white w-100"
                                     type="password"
@@ -78,14 +81,14 @@ class Register extends React.Component {
                                     onChange={this.onPasswordChange}/>
                             </div>
                         </fieldset>
-                        <div className="">
+                        <NavLink exact to='/app'>
                             <input
                                 id='register-register-btn'
                                 onClick={this.onSubmitRegister}
                                 className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib"
                                 type="submit"
                                 value="Register"/>
-                        </div>
+                        </NavLink>
                     </div>
                 </main>
             </article>

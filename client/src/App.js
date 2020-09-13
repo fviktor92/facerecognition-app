@@ -7,6 +7,7 @@ import FaceRecognition from './components/FaceRecognition/FaceRecognition';
 import SignIn from './components/SignIn/SignIn';
 import Register from './components/Register/Register';
 import './App.css';
+import {Route, Switch} from "react-router-dom";
 
 const initialState = {
     input: '',
@@ -27,13 +28,12 @@ class App extends Component {
     constructor() {
         super();
         this.state = initialState
-        this.API_URL = process.env.REACT_APP_API_URL || "http://localhost:3001"; 
+        this.API_URL = process.env.REACT_APP_API_URL || "http://localhost:3001";
     }
 
     componentDidMount() {
         const token = window.sessionStorage.getItem('token');
-        if (token)
-        {
+        if (token) {
             fetch(this.API_URL + '/signin', {
                 method: 'post',
                 headers: {
@@ -41,26 +41,26 @@ class App extends Component {
                     'Authorization': token
                 }
             })
-            .then(resp => resp.json())
-            .then(data => {
-                if (data && data.id) {
-                    fetch(this.API_URL + `/profile/${data.id}`, {
-                        method: 'get',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': token
-                        }
-                    })
-                    .then(resp => resp.json())
-                    .then(user => {
-                        if (user && user.email) {
-                            this.loadUser(user);
-                            this.onRouteChange('home');
-                        }
-                    })
-                }
-            })
-            .catch(console.log)
+                .then(resp => resp.json())
+                .then(data => {
+                    if (data && data.id) {
+                        fetch(this.API_URL + `/profile/${data.id}`, {
+                            method: 'get',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': token
+                            }
+                        })
+                            .then(resp => resp.json())
+                            .then(user => {
+                                if (user && user.email) {
+                                    this.loadUser(user);
+                                    this.onRouteChange('home');
+                                }
+                            })
+                    }
+                })
+                .catch(console.log)
         }
     }
 
@@ -121,28 +121,28 @@ class App extends Component {
                 input: this.state.input
             })
         })
-        .then(response => response.json())
-        .then(response => {
-            if (response) {
-                fetch(this.API_URL + '/image', {
-                    method: 'put',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': window.sessionStorage.getItem('token')
-                    },
-                    body: JSON.stringify({
-                        id: this.state.user.id
+            .then(response => response.json())
+            .then(response => {
+                if (response) {
+                    fetch(this.API_URL + '/image', {
+                        method: 'put',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': window.sessionStorage.getItem('token')
+                        },
+                        body: JSON.stringify({
+                            id: this.state.user.id
+                        })
                     })
-                })
-                    .then(response => response.json())
-                    .then(count => {
-                        this.setState(Object.assign(this.state.user, {entries: count}))
-                    })
-                    .catch(console.log);
-            }
-            this.setFaceBoxes(this.calculateFaceLocations(response))
-        })
-        .catch(err => console.log(err));
+                        .then(response => response.json())
+                        .then(count => {
+                            this.setState(Object.assign(this.state.user, {entries: count}))
+                        })
+                        .catch(console.log);
+                }
+                this.setFaceBoxes(this.calculateFaceLocations(response))
+            })
+            .catch(err => console.log(err));
     };
 
     onRouteChange = (route) => {
@@ -161,18 +161,25 @@ class App extends Component {
                 <div className='content'>
                     <Navigation isSignedIn={isSignedIn} onRouteChange={this.onRouteChange}/>
                     {route === 'home'
-                        ? <div id='app-panel'>
+                        ?
+                        <div id='app-panel'>
                             <Logo/>
                             <Rank name={this.state.user.name} entries={this.state.user.entries}/>
                             <ImageLinkForm onInputChange={this.onInputChange}
                                            onButtonSubmit={this.onPictureSubmit}/>
                             <FaceRecognition boxes={boxes} imageUrl={imageUrl}/>
                         </div>
-                        : (
-                            route === 'signin' || route === 'signout'
-                                ? <SignIn apiurl={this.API_URL} loadUser={this.loadUser} onRouteChange={this.onRouteChange}/>
-                                : <Register apiurl={this.API_URL} loadUser={this.loadUser} onRouteChange={this.onRouteChange}/>
-                        )
+                        :
+                        <Switch>
+                            <Route path="/register">
+                                <Register apiurl={this.API_URL} loadUser={this.loadUser}
+                                          onRouteChange={this.onRouteChange}/>
+                            </Route>
+                            <Route path={["/signin", "/"]}>
+                                <SignIn apiurl={this.API_URL} loadUser={this.loadUser}
+                                        onRouteChange={this.onRouteChange}/>
+                            </Route>
+                        </Switch>
                     }
                 </div>
             </div>
