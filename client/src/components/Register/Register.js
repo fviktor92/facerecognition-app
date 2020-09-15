@@ -1,5 +1,4 @@
 import React from 'react';
-import {NavLink} from "react-router-dom";
 
 class Register extends React.Component {
 
@@ -8,7 +7,8 @@ class Register extends React.Component {
         this.state = {
             email: '',
             password: '',
-            name: ''
+            name: '',
+            errorMessage: ''
         };
     }
 
@@ -34,14 +34,17 @@ class Register extends React.Component {
                 password: this.state.password,
                 name: this.state.name
             })
-        })
-            .then(response => response.json())
-            .then(user => {
-                if (user.id) {
-                    this.props.loadUser(user);
+        }).then(response => {
+            response.json().then(resp => {
+                if (resp.id) {
+                    this.props.loadUser(resp);
                     this.props.onRouteChange('home');
+                } else {
+                    this.setState({errorMessage: resp});
+                    this.props.onRouteChange('register');
                 }
             });
+        });
     };
 
     render() {
@@ -81,14 +84,14 @@ class Register extends React.Component {
                                     onChange={this.onPasswordChange}/>
                             </div>
                         </fieldset>
-                        <NavLink exact to='/app'>
-                            <input
-                                id='register-register-btn'
-                                onClick={this.onSubmitRegister}
-                                className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib"
-                                type="submit"
-                                value="Register"/>
-                        </NavLink>
+                        <input
+                            id='register-register-btn'
+                            onClick={this.onSubmitRegister}
+                            className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib"
+                            type="submit"
+                            value="Register"/>
+                        {this.state.errorMessage && <h3 id="register-error-message"
+                                                        className="db fw6 lh-copy f6 mw5">{this.state.errorMessage}</h3>}
                     </div>
                 </main>
             </article>
