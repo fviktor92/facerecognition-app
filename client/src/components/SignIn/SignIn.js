@@ -7,7 +7,8 @@ class SignIn extends React.Component {
         super(props);
         this.state = {
             signInEmail: '',
-            signInPassword: ''
+            signInPassword: '',
+            errorMessage: ''
         };
     }
 
@@ -51,6 +52,9 @@ class SignIn extends React.Component {
                     }
                 })
             .catch(console.log)
+            } else {
+                this.setState({errorMessage: data.errorMessage});
+                this.props.onRouteChange('signin');
             }
         });
     };
@@ -95,6 +99,8 @@ class SignIn extends React.Component {
                             <NavLink exact to='/register' id='signin-register-btn' onClick={() => onRouteChange('register')}
                                className="f6 link dim black db pointer">Register</NavLink>
                         </div>
+                        {this.state.errorMessage && <h3 id="signin-error-message"
+                                                        className="db fw6 lh-copy f6 mw5">{this.state.errorMessage}</h3>}
                     </div>
                 </main>
             </article>

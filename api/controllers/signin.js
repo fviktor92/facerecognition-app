@@ -8,7 +8,7 @@ const redisClient = redis.createClient(REDIS_URI);
 const handleSignin = (req, res, db, bcrypt) => {
     const {email, password} = req.body;
     if (!email || !password) {
-        return Promise.reject('Incorrect form submission');
+        return res.status(400).json({errorMessage: 'Incorrect form submission'});
     }
 
     return db.select('email', 'hash').from('login')
@@ -24,11 +24,11 @@ const handleSignin = (req, res, db, bcrypt) => {
                 return Promise.reject('Wrong credentials');
             }
         })
-        .catch(err => console.log(err));
+        .catch(() => res.status(400).json({errorMessage: 'Unable to sign in with this e-mail and password combination.'}));
 };
 
 const getAuthTokenId = (req, res) => {
-    const { authorization } = req.headers;
+    const {authorization} = req.headers;
     return redisClient.get(authorization, (err, reply) => {
         if (err || !reply) {
             return res.status(400).json('Unauthorized');
@@ -38,8 +38,8 @@ const getAuthTokenId = (req, res) => {
 }
 
 const signToken = (email) => {
-    const jwtPayload = { email };
-    return jwt.sign(jwtPayload, 'JWT_SECRET', { expiresIn: '2 days'});
+    const jwtPayload = {email};
+    return jwt.sign(jwtPayload, 'JWT_SECRET', {expiresIn: '2 days'});
 }
 
 const setToken = (key, value) => {
@@ -48,21 +48,21 @@ const setToken = (key, value) => {
 
 const createSessions = (user) => {
     // JWT token, return user data
-    const { email, id } = user;
-    const token =  signToken(email);
+    const {email, id} = user;
+    const token = signToken(email);
     return setToken(token, id)
         .then(() => {
-            return { success: 'true', userId: id, token }
+            return {success: 'true', userId: id, token}
         })
         .catch(console.log)
 }
 
 const signInAuthentication = (db, bcrypt) => (req, res) => {
-    const { authorization } = req.headers;
+    const {authorization} = req.headers;
     return authorization ? getAuthTokenId(req, res) :
         handleSignin(req, res, db, bcrypt)
             .then(data => {
-                return data.id && data.email  ? createSessions(data) : Promise.reject(data)
+                return data.id && data.email ? createSessions(data) : Promise.reject(data)
             })
             .then(session => res.json(session))
             .catch(err => res.status(400).json(err));
