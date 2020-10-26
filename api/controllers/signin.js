@@ -31,9 +31,9 @@ const getAuthTokenId = (req, res) => {
     const {authorization} = req.headers;
     return redisClient.get(authorization, (err, reply) => {
         if (err || !reply) {
-            return res.status(400).json('Unauthorized');
+            return res.status(400).json({errorMessage: 'Unauthorized'});
         }
-        return res.json({id: reply});
+        return res.json({success: 'true', userId: reply, token: authorization});
     })
 }
 
@@ -64,7 +64,9 @@ const signInAuthentication = (db, bcrypt) => (req, res) => {
             .then(data => {
                 return data.id && data.email ? createSessions(data) : Promise.reject(data)
             })
-            .then(session => res.json(session))
+            .then(session => {
+                res.json(session)
+            })
             .catch(err => res.status(400).json(err));
 }
 
