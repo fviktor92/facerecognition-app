@@ -67,7 +67,7 @@ const signInAuthentication = (db, bcrypt) => (req, res) => {
             .then(session => {
                 res.json(session)
             })
-            .catch(err => res.status(400).json(err));
+            .catch(err => res.status(400).json({errorMessage: err}));
 }
 
 module.exports = {
