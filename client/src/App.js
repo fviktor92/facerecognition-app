@@ -15,6 +15,7 @@ const initialState = {
     boxes: [],
     route: 'signin',
     isSignedIn: false,
+    errorMessage: '',
     user: {
         id: '',
         name: '',
@@ -123,7 +124,7 @@ class App extends Component {
         })
             .then(response => response.json())
             .then(response => {
-                if (response) {
+                if (response.outputs) {
                     fetch(this.API_URL + '/image', {
                         method: 'put',
                         headers: {
@@ -136,11 +137,17 @@ class App extends Component {
                     })
                         .then(response => response.json())
                         .then(json => {
-                            this.setState(Object.assign(this.state.user, {entries: json.entries}))
+                            if (json.entries) {
+                                this.setState(Object.assign(this.state.user, {entries: json.entries}))
+                            } else {
+                                this.setState({errorMessage: response.errorMessage});
+                            }
                         })
                         .catch(console.log);
+                    this.setFaceBoxes(this.calculateFaceLocations(response))
+                } else {
+                    this.setState({errorMessage: response.errorMessage});
                 }
-                this.setFaceBoxes(this.calculateFaceLocations(response))
             })
             .catch(err => console.log(err));
     };
@@ -167,7 +174,10 @@ class App extends Component {
                             <Rank name={this.state.user.name} entries={this.state.user.entries}/>
                             <ImageLinkForm onInputChange={this.onInputChange}
                                            onButtonSubmit={this.onPictureSubmit}/>
-                            <FaceRecognition boxes={boxes} imageUrl={imageUrl}/>
+                            {this.state.imageUrl && this.state.errorMessage === ''
+                            && <FaceRecognition boxes={boxes} imageUrl={imageUrl}/>}
+                            {this.state.errorMessage && <h3 id="face-recognition-error-message"
+                                                            className="center db fw6 lh-copy f6 mw5">{this.state.errorMessage}</h3>}
                         </div>
                         :
                         <Switch>
