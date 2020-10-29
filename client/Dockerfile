@@ -1,4 +1,4 @@
-FROM node:10.15.0
+FROM node:14.12.0
 
 # Set the working directory to /client
 WORKDIR /client
@@ -6,7 +6,7 @@ WORKDIR /client
 # copy package.json into the container at /facerecognition-app/client
 COPY package*.json /facerecognition-app/client/
 
-# install dependencies
+# install packages
 RUN npm install
 
 # Copy the current directory contents into the container at /facerecognition-app/client
